@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { ScrollView, TextInput, BorderlessButton, RectButton } from 'react-native-gesture-handler';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
+import { ScrollView, BorderlessButton } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 
 import Spendig, {ISpending} from '../../components/Spending';
@@ -9,29 +9,23 @@ import SpendingItem, {ISpendingItem} from '../../components/SpendingItem';
 import Footer from '../../components/Footer';
 import DataJson from '../../assets/data.json';
 import PageHeaderMonth from '../../components/PageHeaderMonth';
+import api from '../../services/api';
+
 import styles from './styles';
 
 function SpendingPage() {
-  const { navigate } = useNavigation();
   const [spendings, setSpending] = useState(DataJson);
 
   function loadingSpending() {
-    // api.get('connections')
-    // .then(response => {
-    //   const { total } = response.data;
-    //   setTotalSpending(total);
-    // })
-    console.log(spendings);
+    api.get('api/spendings')
+    .then(response => {
+      setSpending(response.data);
+    })
   }
 
   useFocusEffect(() => {
-    loadingSpending();
+    loadingSpending(); //
   })
-
-  function handleNavigareToRefundPage() {
-    navigate('Refund');
-  }
-
 
   return (
     <View style={styles.container} >
@@ -46,10 +40,10 @@ function SpendingPage() {
             {spendings.map((spending: ISpending) => {
               return (
                   <Spendig key={spending.id} spending={spending}>
-                    {
+                    { 
                       spending.spending_itens.map((spendItem: ISpendingItem) => {
                         return (
-                          <SpendingItem spending={spendItem} />
+                          <SpendingItem key={spendItem.id + spending.id}  spending={spendItem} />
                         )
                       })
                     }

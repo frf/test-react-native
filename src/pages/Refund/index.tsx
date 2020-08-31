@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, TextInput } from 'react-native';
 import PageHeader from '../../components/PageHeader';
-import styles from './styles';
 import { Feather } from '@expo/vector-icons';
 import TicketImg from '../../assets/images/ticket.png';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { ISpendingItem } from '../../components/SpendingItem'
+import api from '../../services/api';
 
-function Refund() {
-    const [spending, setSpending] = useState({
-        id: 1,
-        title: 'Almoço Restaurante',
-        type: 'Alimentação',
-        amount: '26,00',
-        currency: 'R$',
-        date: '14/09/19',
-        status: 1,
-        isRefund: 1,
-        companyRefund: 'Contele Filial de Santos - SP ',
-        dateTimeRefund: '14/09/19 - 13:50',
-    });
+import styles from './styles';
+
+function Refund({ route, navigation }) {
+
+    const { navigate } = useNavigation();
+    const { id } = route.params;
+    const [spending, setSpendin] = useState({});
+    
+    useEffect(() => {
+        loadData();
+      }, []);
+
+    console.log(route.params, id)
+
+    const loadData = async () => {
+        api.get('api/spendings/show?id=' + id)
+        .then(response => {
+            console.log(response.data)
+            setSpendin(response.data);
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
 
     return ( 
         <View style={styles.container} >
